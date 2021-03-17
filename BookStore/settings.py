@@ -98,6 +98,7 @@ CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
+
 STATIC_ROOT = 'staticfiles'
 
 STATIC_URL = '/static/'

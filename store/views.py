@@ -96,3 +96,12 @@ class BookListView(ListView):
 class BookDetailView(DetailView):
     model = Book
     template_name = 'store/book_detail.html'
+
+
+class UserProfile(DetailView):
+    model = User
+    template_name = 'store/user_detail.html'
+
+    def get_object(self, queryset=None):
+        user = self.request.user
+        return user
