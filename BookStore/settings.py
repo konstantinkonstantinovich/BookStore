@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'storage.apps.StorageConfig',
     'bootstrap4',
     'crispy_forms',
+    'django_extensions',
 ]
 
 MIDDLEWARE = [

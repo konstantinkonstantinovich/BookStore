@@ -1,0 +1,149 @@
+{% extends "base.html" %}
+
+{% block content %}
+<link href="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+<script src="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+<style>
+.gallery-wrap .img-big-wrap img {
+    height: 450px;
+    width: auto;
+    display: inline-block;
+    cursor: zoom-in;
+}
+
+
+.gallery-wrap .img-small-wrap .item-gallery {
+    width: 60px;
+    height: 60px;
+    border: 1px solid #ddd;
+    margin: 7px 2px;
+    display: inline-block;
+    overflow: hidden;
+}
+
+.gallery-wrap .img-small-wrap {
+    text-align: center;
+}
+.gallery-wrap .img-small-wrap img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: cover;
+    border-radius: 4px;
+    cursor: zoom-in;
+}
+img {
+    width: 100%;
+    height: 100%;
+}
+
+
+</style>
+
+<div class="container">
+	<br>  <p class="text-center">More books on <strong style="font-style: italic">BookStore</strong> <a href="{% url 'store:book-list' %}"> Book-store.com</a></p>
+<hr>
+
+
+<div class="card">
+	<div class="row">
+		<aside class="col-sm-5 border-right">
+            <article class="gallery-wrap">
+                <div class="img-big-wrap">
+                    <div> <a href="#"><img src="{{ object.image.url  }}"></a></div>
+                </div> <!-- slider-product.// -->
+            </article> <!-- gallery-wrap .end// -->
+        </aside>
+        <aside class="col-sm-7">
+<article class="card-body p-5">
+	<h3 class="title mb-3">{{ object.title }}</h3>
+
+<p class="price-detail-wrap">
+	<span class="price h3 text-warning">
+		<span class="currency">US $</span><span class="num">{{ object.price }}</span>
+	</span>
+</p> <!-- price-detail-wrap .// -->
+<dl class="item-property">
+  <dt>Description</dt>
+  <dd><p>Here goes description consectetur adipisicing elit, sed do eiusmod
+tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
+quis nostrud exercitation ullamco </p></dd>
+</dl>
+<dl class="param param-feature">
+  <dt>Author#</dt>
+  <dd>{{ object.author.all.get }}</dd>
+</dl>  <!-- item-property-hor .// -->
+<dl class="param param-feature">
+  <dt>Publication year:</dt>
+  <dd>{{ object.publication_year }}</dd>
+</dl>  <!-- item-property-hor .// -->
+<dl class="param param-feature">
+  <dt>Status</dt>
+  {% if object.status == 1 %}
+     <dd style="font-style: italic; color: greenyellow;">available</dd>
+  {% else %}
+     <dd style="font-style: italic; color: red;">not available</dd>
+  {% endif %}
+</dl>  <!-- item-property-hor .// -->
+
+<hr>
+	<div class="row">
+		<div class="col-sm-5">
+			<dl class="param param-inline">
+			  <dt>Quantity: </dt>
+			  <dd>
+			  	<select class="form-control form-control-sm" style="width:70px;">
+			  		<option> 1 </option>
+			  		<option> 2 </option>
+			  		<option> 3 </option>
+			  	</select>
+			  </dd>
+			</dl>  <!-- item-property .// -->
+		</div> <!-- col.// -->
+		<div class="col-sm-7">
+			<dl class="param param-inline">
+				  <dt>Rating: </dt>
+				  <dd>
+			        {% if book.rating < 0.5 %}
+			            ☆☆☆☆☆
+			        {% elif book.rating >= 0.5 and book.rating < 1.5 %}
+                        ★☆☆☆☆
+			        {% elif book.rating >= 1.5 and book.rating < 2.5 %}
+			            ★★☆☆☆
+			        {% elif book.rating >= 2.5 and book.rating < 3.5 %}
+			            ★★★☆☆
+			        {% elif book.rating >= 3.5 and book.rating < 4.5 %}
+			            ★★★★☆
+			        {% else %}
+			            ★★★★★
+			        {% endif %}
+				  </dd>
+			</dl>  <!-- item-property .// -->
+		</div> <!-- col.// -->
+	</div> <!-- row.// -->
+	<hr>
+	<a href="#" class="btn btn-lg btn-primary text-uppercase"> Buy now </a>
+	<a href="#" class="btn btn-lg btn-outline-primary text-uppercase"> <i class="fas fa-shopping-cart"></i><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-cart" viewBox="0 0 16 16">
+  <path d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.379L2.89 3H14.5a.5.5 0 0 1 .491.592l-1.5 8A.5.5 0 0 1 13 12H4a.5.5 0 0 1-.491-.408L2.01 3.607 1.61 2H.5a.5.5 0 0 1-.5-.5zM3.102 4l1.313 7h8.17l1.313-7H3.102zM5 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm7 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm-7 1a1 1 0 1 1 0 2 1 1 0 0 1 0-2zm7 0a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/>
+</svg> Add to cart </a>
+</article> <!-- card-body.// -->
+		</aside> <!-- col.// -->
+	</div> <!-- row.// -->
+</div> <!-- card.// -->
+
+
+</div>
+<br><br><br>
+<article class="bg-secondary mb-3">
+<div class="card-body text-center">
+    <h4 class="text-white">HTML UI KIT <br> Ready to use Bootstrap 4 components and templates </h4>
+<p class="h5 text-white"> for Ecommerce, marketplace, booking websites
+and product landing pages</p>   <br>
+<p><a class="btn btn-warning" target="_blank" href="http://bootstrap-ecommerce.com/"> Bootstrap-ecommerce.com
+ <i class="fa fa-window-restore "></i></a></p>
+</div>
+<br><br><br>
+</article>
+
+{% endblock %}

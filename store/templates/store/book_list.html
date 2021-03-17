@@ -58,7 +58,7 @@
 		    <figcaption class="info-wrap">
 			    <h6 class="title text-dots"><a href="#">{{ object.title}}</a></h6>
 			    <div class="action-wrap">
-				    <a href="#" class="btn btn-primary btn-sm float-right"> BUY </a>
+				    <a href="{% url 'store:book-detail' object.id %}" class="btn btn-primary btn-sm float-right"> BUY </a>
 				    <div class="price-wrap h5">
 					    <span class="price-new">${{ object.price }}</span>
 					    <del class="price-old">$12</del>

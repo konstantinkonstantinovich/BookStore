@@ -6,7 +6,7 @@ from django.http import HttpResponseRedirect, HttpResponse
 
 # Create your views here.
 from django.shortcuts import redirect, render
-from django.views.generic import CreateView, ListView
+from django.views.generic import CreateView, ListView, DetailView
 from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth import update_session_auth_hash
 
@@ -92,3 +92,7 @@ class BookListView(ListView):
     model = Book
     template_name = 'store/book_list.html'
 
+
+class BookDetailView(DetailView):
+    model = Book
+    template_name = 'store/book_detail.html'
