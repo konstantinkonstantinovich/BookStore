@@ -23,7 +23,7 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'i_%0#9eq726tuu82zqfo2-e69vv0k4w-l63)d04t^_2+0k&ar#'
+SECRET_KEY = os.environ.get("SECRET_KEY", 'mysecretkeyis...')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
