@@ -9,8 +9,9 @@ from django.shortcuts import redirect, render
 from django.views.generic import CreateView, ListView, DetailView
 from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth import update_session_auth_hash
+from django.views.generic.base import View
 
-from .models import Book, Author, Comment
+from .models import Book, Author, Comment, Cart, CartBook
 
 
 def index(request):
@@ -105,3 +106,5 @@ class UserProfile(DetailView):
     def get_object(self, queryset=None):
         user = self.request.user
         return user
+
+

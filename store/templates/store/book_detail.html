@@ -7,12 +7,15 @@
 
 <style>
 .gallery-wrap .img-big-wrap img {
-    height: 450px;
-    width: auto;
+
     display: inline-block;
     cursor: zoom-in;
 }
 
+.img-big-wrap img{
+    height: 100%;
+    width: 100%;
+}
 
 .gallery-wrap .img-small-wrap .item-gallery {
     width: 60px;
@@ -66,9 +69,7 @@ img {
 </p> <!-- price-detail-wrap .// -->
 <dl class="item-property">
   <dt>Description</dt>
-  <dd><p>Here goes description consectetur adipisicing elit, sed do eiusmod
-tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
-quis nostrud exercitation ullamco </p></dd>
+  <dd><p>{{ object.description }} </p></dd>
 </dl>
 <dl class="param param-feature">
   <dt>Author#</dt>
