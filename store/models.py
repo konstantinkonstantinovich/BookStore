@@ -59,22 +59,17 @@ class Comment(models.Model):
     )
 
 
-class Cart(models.Model):
-    owner = models.ForeignKey(User, on_delete=models.CASCADE)
-    books = models.ManyToManyField('CartBook', blank=True, related_name='related_card')
-    total_books = models.PositiveIntegerField(default=0)
-    total_price = models.DecimalField(max_digits=9, decimal_places=2)
-
-
 class CartBook(models.Model):
     book = models.ForeignKey(Book, on_delete=models.CASCADE)
     quantity = models.PositiveIntegerField(default=1)
-    total_price = models.DecimalField(max_digits=9, decimal_places=2)
     customer = models.ForeignKey(User, on_delete=models.CASCADE)
-    card = models.ForeignKey(Cart, on_delete=models.CASCADE, related_name='related_books')
 
 
-
+class Cart(models.Model):
+    owner = models.ForeignKey(User, on_delete=models.CASCADE)
+    total_books = models.PositiveIntegerField(default=0)
+    total_price = models.DecimalField(max_digits=9, decimal_places=2)
+    product = models.ForeignKey(CartBook, on_delete=models.CASCADE)
 
 
 

@@ -1,5 +1,6 @@
 from django.contrib import messages
 from django.contrib.auth import login, logout
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import User
 from django.contrib.auth.views import LoginView
 from django.http import HttpResponseRedirect, HttpResponse
@@ -9,9 +10,8 @@ from django.shortcuts import redirect, render
 from django.views.generic import CreateView, ListView, DetailView
 from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth import update_session_auth_hash
-from django.views.generic.base import View
 
-from .models import Book, Author, Comment, Cart, CartBook
+from .models import Book, Cart, CartBook
 
 
 def index(request):
@@ -79,7 +79,7 @@ def change_password(request):
             user = form.save()
             update_session_auth_hash(request, user)
             messages.success(request, 'Your password was successfully updated!')
-            return redirect('blog:login')
+            return redirect('shop:login')
         else:
             messages.error(request, 'Please correct the error below.')
     else:
@@ -108,3 +108,25 @@ class UserProfile(DetailView):
         return user
 
 
+class CartListView(ListView, LoginRequiredMixin):
+    model = Cart
+    template_name = 'store/card_list.html'
+
+
+def add_to_cart(request, pk):
+    count = 1
+    user = request.user
+    cart_item = CartBook(
+        customer=user,
+        book=Book.objects.get(pk=pk),
+        quantity=count
+    )
+    cart_item.save()
+    cart = Cart(
+        product=cart_item.id,
+        total_books=cart_item.quantity,
+        total_price=Book.price,
+        owner=user
+    )
+    cart.save()
+    return redirect('store:cart-list')
