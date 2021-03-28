@@ -1,3 +1,5 @@
+from django.db.models import Count
+from django.db.models import Sum
 from django.contrib import messages
 from django.contrib.auth import login, logout
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -6,22 +8,23 @@ from django.contrib.auth.views import LoginView
 from django.http import HttpResponseRedirect, HttpResponse
 
 # Create your views here.
-from django.shortcuts import redirect, render
+from django.shortcuts import redirect, render, get_object_or_404
 from django.views.generic import CreateView, ListView, DetailView
 from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth import update_session_auth_hash
 
-from .models import Book, Cart, CartBook
+from .models import Book, Cart, CartBook, Comment
 
 
 def index(request):
+    cart_total_price = Cart.objects.aggregate(Sum('total_price'))
     num_visits = request.session.get('num_visits', 0)
     request.session['num_visits'] = num_visits + 1
     return render(
         request,
         'index.html',
         context={
-
+            'cart_total_price': cart_total_price,
             'num_visits': num_visits,
         },
     )
@@ -98,6 +101,11 @@ class BookDetailView(DetailView):
     model = Book
     template_name = 'store/book_detail.html'
 
+    def get_context_data(self, **kwargs):
+        object_list = Comment.objects.filter(book=self.get_object())
+        context = super(BookDetailView, self).get_context_data(object_list=object_list, **kwargs)
+        return context
+
 
 class UserProfile(DetailView):
     model = User
@@ -123,10 +131,48 @@ def add_to_cart(request, pk):
     )
     cart_item.save()
     cart = Cart(
-        product=cart_item.id,
+        product=cart_item,
         total_books=cart_item.quantity,
-        total_price=Book.price,
+        total_price=cart_item.book.price,
         owner=user
     )
+
     cart.save()
     return redirect('store:cart-list')
+
+
+class CommentCreateView(CreateView):
+    model = Comment
+    fields = ['comment', 'rating']
+    template_name = 'store/comment_form.html'
+    success_url = '/store/books/'
+
+    def form_valid(self, form):
+        form.instance.book = get_object_or_404(Book, pk=self.kwargs['pk'])
+        if self.request.user.is_authenticated:
+            form.instance.author = self.request.user
+        else:
+            if User.objects.filter(username='anon').exists():
+                form.instance.author = User.objects.get(username='anon')
+            else:
+                User.objects.create(username='anon')
+                form.instance.author = User.objects.get(username='anon')
+        return super(CommentCreateView, self).form_valid(form)
+
+
+def buy_book_now(request):
+    messages.add_message(request, messages.SUCCESS, 'Buying success!')
+    return redirect('store:book-list')
+
+
+def buy_book_in_cart(request):
+    Cart.objects.all().delete()
+    CartBook.objects.all().delete()
+    messages.add_message(request, messages.SUCCESS, 'Buying success!')
+    return redirect('store:book-list')
+
+
+def cart_total(request):
+    cart_total_price = Cart.objects.aggregate(Sum('total_price'))
+    data = {"totalprice": cart_total_price}
+    return render(request, 'store/card_list.html', context=data)

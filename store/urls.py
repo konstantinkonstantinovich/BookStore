@@ -14,6 +14,8 @@ urlpatterns = [
     path('books/', views.BookListView.as_view(), name='book-list'),
     path('books/<int:pk>/', views.BookDetailView.as_view(), name='book-detail'),
     path('cart/list/', views.CartListView.as_view(), name='cart-list'),
-    path('cart/<int:pk>', views.add_to_cart, name='cart-create')
-
+    path('cart/<int:pk>', views.add_to_cart, name='cart-create'),
+    path('books/buy_now/', views.buy_book_now, name='buy-book-now'),
+    path('cart/list/buy_in_cart/', views.buy_book_in_cart, name='buy-in-cart'),
+    path('comment_add/<int:pk>', views.CommentCreateView.as_view(), name='comment'),
 ]

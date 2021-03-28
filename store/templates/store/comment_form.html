@@ -1,0 +1,18 @@
+
+{% extends "base.html" %}
+
+{% load bootstrap4 %}
+
+{% block content %}
+
+<form method="post">
+    {% csrf_token %}
+    {% bootstrap_form form %}
+    {% buttons %}
+<button class="btn btn-lg" style="background-color:slategray;">
+   <i class="fa fa-pencil"></i> Post
+</button>
+    {% endbuttons %}
+</form>
+
+{% endblock %}
