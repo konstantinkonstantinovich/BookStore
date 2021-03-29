@@ -1,5 +1,5 @@
 import datetime
-
+from django.db.models import Q
 from django.db.models import Count
 from django.db.models import Sum
 from django.contrib import messages
@@ -185,5 +185,13 @@ def buy_book_in_cart(request):
     return redirect('store:book-list')
 
 
-def delete_item_from_cart(request):
-    cart_item = Cart.objects.get()
+class SearchResultView(ListView):
+    model = Book
+    template_name = 'search_results.html'
+
+    def get_queryset(self):
+        query = self.request.GET.get('q')
+        object_list = Book.objects.filter(
+            Q(title__contains=query) | Q(category__name__contains=query)
+        )
+        return object_list

@@ -1,9 +1,9 @@
-{% extends "base.html" %}
+{% extends 'base.html' %}
 
 {% load static %}
 
-
 {% block content %}
+
 <style>
 .card-product:after {
     content: "";
@@ -43,44 +43,14 @@
   .card:hover {
       box-shadow: 2px 5px 10px 2px gold;
   }
-.main {
-    width: 100%;
-}
-
-/* Bootstrap 4 text input with search icon */
-
-.has-search .form-control {
-    padding-left: 2.375rem;
-}
-
-.has-search .form-control-feedback {
-    position: absolute;
-    z-index: 2;
-    display: block;
-    width: 2.375rem;
-    height: 2.375rem;
-    line-height: 2.375rem;
-    text-align: center;
-    pointer-events: none;
-    color: #aaa;
-}
-
 </style>
-<div class="container">
-<br>  <p class="text-center">
-    <form action="{% url 'store:search_results' %}" method="get">
-    <div class="main">
-          <div class="form-group has-search">
-            <input type="text" name="q" class="form-control" placeholder="Search">
-          </div>
-    </div>
-    </form>
-</p>
-<hr style="width: 100%;">
 
+<div class="container">
+<br>  <p class="text-center"><strong>Library</strong><a href="http://bootstrap-ecommerce.com/"> book.com</a></p>
+<hr style="width: 100%;">
 <div class="row">
-	{% for object in object_list %}
-    <div class="col-md-3">
+    {% for object in object_list %}
+        <div class="col-md-3">
 	    <figure class="card card-product">
 		    <div class="img-wrap">
                 {% if object.image %}
@@ -100,10 +70,10 @@
 	    </figure> <!-- card // -->
     </div> <!-- col // -->
 
-	{% endfor %}
-    </div>
+    {% endfor %}
 </div>
-<br><br><br>
+</div>
+    <br><br><br>
 <article class="bg-secondary mb-3">
 <div class="card-body text-center">
     <h4 class="text-white">HTML UI KIT <br> Ready to use Bootstrap 4 components and templates </h4>
@@ -114,5 +84,4 @@ and product landing pages</p>   <br>
 </div>
 <br><br><br>
 </article>
-
 {% endblock %}
