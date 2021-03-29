@@ -23,13 +23,13 @@ class CategoryModelAdmin(admin.ModelAdmin):
 
 
 @admin.register(CartBook)
-class CardBookModelAdmin(admin.ModelAdmin):
+class CartBookModelAdmin(admin.ModelAdmin):
     list_display = ['book', 'quantity', 'customer', 'cart']
     fields = ['book', 'quantity', 'customer', 'cart']
 
 
 @admin.register(Cart)
-class CardModelAdmin(admin.ModelAdmin):
+class CartModelAdmin(admin.ModelAdmin):
     list_display = ['owner', 'total_books', 'total_price']
     fields = ['owner', 'total_books', 'total_price']
 

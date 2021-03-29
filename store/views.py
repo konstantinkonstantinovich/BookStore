@@ -1,3 +1,5 @@
+import datetime
+
 from django.db.models import Count
 from django.db.models import Sum
 from django.contrib import messages
@@ -12,6 +14,8 @@ from django.shortcuts import redirect, render, get_object_or_404
 from django.views.generic import CreateView, ListView, DetailView
 from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth import update_session_auth_hash
+from django.views.generic.detail import SingleObjectMixin
+from django.views.generic.list import MultipleObjectMixin
 
 from .models import Book, Cart, CartBook, Comment
 
@@ -26,7 +30,7 @@ def index(request):
         context={
             'cart_total_price': cart_total_price,
             'num_visits': num_visits,
-        },
+        }
     )
 
 
@@ -97,13 +101,14 @@ class BookListView(ListView):
     template_name = 'store/book_list.html'
 
 
-class BookDetailView(DetailView):
+class BookDetailView(DetailView, MultipleObjectMixin):
     model = Book
     template_name = 'store/book_detail.html'
 
     def get_context_data(self, **kwargs):
-        object_list = Comment.objects.filter(book=self.get_object())
-        context = super(BookDetailView, self).get_context_data(object_list=object_list, **kwargs)
+        object_lists = Comment.objects.filter(book=self.get_object())
+        context = super(BookDetailView, self).get_context_data(object_list=object_lists, **kwargs)
+        context['myDate'] = datetime.datetime.now()
         return context
 
 
@@ -119,6 +124,14 @@ class UserProfile(DetailView):
 class CartListView(ListView, LoginRequiredMixin):
     model = Cart
     template_name = 'store/card_list.html'
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super().get_context_data(**kwargs)
+        cart_total_price = Cart.objects.aggregate(Sum('total_price'))
+        if cart_total_price['total_price__sum'] is None:
+            cart_total_price['total_price__sum'] = 0
+        context['cart_total'] = cart_total_price['total_price__sum']
+        return context
 
 
 def add_to_cart(request, pk):
@@ -172,7 +185,5 @@ def buy_book_in_cart(request):
     return redirect('store:book-list')
 
 
-def cart_total(request):
-    cart_total_price = Cart.objects.aggregate(Sum('total_price'))
-    data = {"totalprice": cart_total_price}
-    return render(request, 'store/card_list.html', context=data)
+def delete_item_from_cart(request):
+    cart_item = Cart.objects.get()
