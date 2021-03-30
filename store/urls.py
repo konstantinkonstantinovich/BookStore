@@ -19,4 +19,5 @@ urlpatterns = [
     path('cart/list/buy_in_cart/', views.buy_book_in_cart, name='buy-in-cart'),
     path('comment_add/<int:pk>', views.CommentCreateView.as_view(), name='comment'),
     path('search/', views.SearchResultView.as_view(), name='search_results'),
+    path('contact/', views.contact_form, name="store-contact"),
 ]

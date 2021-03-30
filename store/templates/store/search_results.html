@@ -41,13 +41,43 @@
       box-shadow: 2px 5px 10px 2px silver;
   }
   .card:hover {
-      box-shadow: 2px 5px 10px 2px gold;
+      box-shadow: 2px 5px 10px 2px dodgerblue;
   }
+  .main {
+    width: 100%;
+}
+
+/* Bootstrap 4 text input with search icon */
+
+.has-search .form-control {
+    padding-left: 2.375rem;
+}
+
+.has-search .form-control-feedback {
+    position: absolute;
+    z-index: 2;
+    display: block;
+    width: 2.375rem;
+    height: 2.375rem;
+    line-height: 2.375rem;
+    text-align: center;
+    pointer-events: none;
+    color: #aaa;
+}
 </style>
 
-<div class="container">
-<br>  <p class="text-center"><strong>Library</strong><a href="http://bootstrap-ecommerce.com/"> book.com</a></p>
+<div class="container" style="width: 100%">
+<br>  <p class="text-center">
+    <form action="{% url 'store:search_results' %}" method="get">
+    <div class="main">
+          <div class="form-group has-search">
+            <input type="text" name="q" class="form-control" placeholder="Search">
+          </div>
+    </div>
+    </form>
+</p>
 <hr style="width: 100%;">
+
 <div class="row">
     {% for object in object_list %}
         <div class="col-md-3">

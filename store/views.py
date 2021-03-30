@@ -1,23 +1,26 @@
 import datetime
 from django.db.models import Q
-from django.db.models import Count
 from django.db.models import Sum
 from django.contrib import messages
 from django.contrib.auth import login, logout
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import User
 from django.contrib.auth.views import LoginView
-from django.http import HttpResponseRedirect, HttpResponse
+from django.template.loader import render_to_string
+from django.http import HttpResponseRedirect, HttpResponse, JsonResponse, Http404
 
 # Create your views here.
 from django.shortcuts import redirect, render, get_object_or_404
 from django.views.generic import CreateView, ListView, DetailView
 from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth import update_session_auth_hash
-from django.views.generic.detail import SingleObjectMixin
 from django.views.generic.list import MultipleObjectMixin
 
 from .models import Book, Cart, CartBook, Comment
+
+from .forms import ContactForm, FilterForm
+
+from .tasks import send_mail_task
 
 
 def index(request):
@@ -126,12 +129,18 @@ class CartListView(ListView, LoginRequiredMixin):
     template_name = 'store/card_list.html'
 
     def get_context_data(self, *, object_list=None, **kwargs):
+        owner = self.request.user
         context = super().get_context_data(**kwargs)
-        cart_total_price = Cart.objects.aggregate(Sum('total_price'))
+        cart_total_price = Cart.objects.filter(owner=owner).aggregate(Sum('total_price'))
         if cart_total_price['total_price__sum'] is None:
             cart_total_price['total_price__sum'] = 0
         context['cart_total'] = cart_total_price['total_price__sum']
         return context
+
+    def get_queryset(self):
+        owner = self.request.user
+        object_list = Cart.objects.filter(owner=owner)
+        return object_list
 
 
 def add_to_cart(request, pk):
@@ -187,7 +196,7 @@ def buy_book_in_cart(request):
 
 class SearchResultView(ListView):
     model = Book
-    template_name = 'search_results.html'
+    template_name = 'store/search_results.html'
 
     def get_queryset(self):
         query = self.request.GET.get('q')
@@ -195,3 +204,49 @@ class SearchResultView(ListView):
             Q(title__contains=query) | Q(category__name__contains=query)
         )
         return object_list
+
+
+def contact_form(request):
+    data = dict()
+    if request.method == "GET":
+        form = ContactForm()
+    else:
+        form = ContactForm(request.POST)
+        if form.is_valid():
+            subject = form.cleaned_data['subject']
+            from_email = form.cleaned_data['from_email']
+            message = form.cleaned_data['message']
+            send_mail_task.delay(subject, message, from_email)
+            messages.add_message(request, messages.SUCCESS, 'Message sent')
+            return redirect('store:book-list')
+        else:
+            data['form_is_valid'] = False
+    context = {'form': form}
+    data['html_form'] = render_to_string(
+        template_name='includes/contact.html',
+        context=context,
+        request=request
+    )
+    return JsonResponse(data)
+
+
+def filter_form(request):
+    books = None
+    form = FilterForm(request.GET)
+    if form.is_valid():
+        sorting = form.cleaned_data['sorting']
+        price_max = form.cleaned_data['price_sorting']
+        category_pk = form.cleaned_data['category']
+        if category_pk:
+            books = Book.objects.filter(category__id=category_pk).filter(price=price_max)
+        else:
+            books = Book.objects.filter(price=price_max)
+        books = list(books)
+        if sorting == "popularity":
+            books.sort(key=lambda book: book.rating, reverse=True)
+    else:
+        raise Http404
+    return render(request, 'store/filter.html', dict(
+        books=books,
+        form=form
+    ))
