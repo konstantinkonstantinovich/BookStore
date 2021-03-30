@@ -250,3 +250,9 @@ def filter_form(request):
         books=books,
         form=form
     ))
+
+
+def delete_from(request, pk):
+    cart = Cart.objects.get(pk=pk)
+    cart.delete()
+    return redirect('store:cart-list')
