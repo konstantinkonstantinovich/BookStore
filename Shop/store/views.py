@@ -190,7 +190,7 @@ def buy_book_now(request):
 def buy_book_in_cart(request):
     owner = request.user
     Cart.objects.filter(owner=owner).all().delete()
-    CartBook.objects.filter(user=owner).all().delete()
+    CartBook.objects.filter(customer=owner).all().delete()
     messages.add_message(request, messages.SUCCESS, 'Buying success!')
     return redirect('store:book-list')
 
@@ -224,7 +224,7 @@ def contact_form(request):
             data['form_is_valid'] = False
     context = {'form': form}
     data['html_form'] = render_to_string(
-        template_name='includes/contact.html',
+        template_name='../templates/includes/contact.html',
         context=context,
         request=request
     )
