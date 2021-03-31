@@ -188,8 +188,9 @@ def buy_book_now(request):
 
 
 def buy_book_in_cart(request):
-    Cart.objects.all().delete()
-    CartBook.objects.all().delete()
+    owner = request.user
+    Cart.objects.filter(owner=owner).all().delete()
+    CartBook.objects.filter(user=owner).all().delete()
     messages.add_message(request, messages.SUCCESS, 'Buying success!')
     return redirect('store:book-list')
 

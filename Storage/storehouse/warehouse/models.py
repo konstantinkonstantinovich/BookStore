@@ -1,7 +1,8 @@
 from django.db import models
 from django.contrib.auth import get_user_model
 from django.utils.translation import gettext_lazy as _
-# Create your models here.
+# Create your models here
+
 
 User = get_user_model()
 
@@ -42,32 +43,24 @@ class Book(models.Model):
         return self.title
 
 
-class Comment(models.Model):
-    author = models.ForeignKey(User, on_delete=models.CASCADE)
-    book = models.ForeignKey(Book, on_delete=models.CASCADE)
-    comment = models.TextField(max_length=10000,
-                               help_text="Input your comment.")
-    rating = models.PositiveSmallIntegerField(
-        choices=(
-            (1, "★☆☆☆☆"),
-            (2, "★★☆☆☆"),
-            (3, "★★★☆☆"),
-            (4, "★★★★☆"),
-            (5, "★★★★★"),
-        )
+class Order(models.Model):
 
+    class OrderStatus(models.IntegerChoices):
+        WAITING = 1, _('Waiting')
+        IN_PROGRESS = 2, _('In progress')
+        DONE = 3, _('Done')
+
+    phone = models.CharField(max_length=255)
+    first_name = models.CharField(max_length=255)
+    email = models.EmailField(unique=True)
+    status = models.PositiveSmallIntegerField(
+        choices=OrderStatus.choices, default=OrderStatus.WAITING, blank=True
     )
 
 
-class CartBook(models.Model):
+class OrderItem(models.Model):
+    order = models.ForeignKey(Order, on_delete=models.CASCADE)
+    total_price = models.DecimalField(max_digits=9, decimal_places=2)
     book = models.ForeignKey(Book, on_delete=models.CASCADE)
     quantity = models.PositiveIntegerField(default=1)
-    customer = models.ForeignKey(User, on_delete=models.CASCADE)
-
-
-class Cart(models.Model):
-    owner = models.ForeignKey(User, on_delete=models.CASCADE)
-    total_books = models.PositiveIntegerField(default=0)
-    total_price = models.DecimalField(max_digits=9, decimal_places=2)
-    product = models.ForeignKey(CartBook, on_delete=models.CASCADE)
 

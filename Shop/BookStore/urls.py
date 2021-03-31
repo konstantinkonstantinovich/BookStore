@@ -19,13 +19,12 @@ from django.urls import path, include
 from django.views.generic import RedirectView
 from django.conf.urls.static import static
 
-from store.views import UserProfile
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('store/', include('store.urls')),
     path('accounts/', include('django.contrib.auth.urls')),
-    path('accounts/user/', UserProfile.as_view(), name='user-detail'),
+    # path('accounts/user/', UserProfile.as_view(), name='user-detail'),
     path('', RedirectView.as_view(url='/store/', permanent=True)),
 
 ]+static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
