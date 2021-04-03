@@ -23,4 +23,5 @@ urlpatterns = [
     path('cart/delete/<int:pk>/', views.delete_from, name="cart-delete"),
     path('cart/plus/<int:pk>', views.plus_form, name="cart-item-plus"),
     path('cart/minus/<int:pk>', views.minus_form, name="cart-item-minus"),
+    path('accounts/user/', views.UserProfile.as_view(), name='user-detail'),
 ]

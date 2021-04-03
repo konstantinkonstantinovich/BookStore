@@ -30,7 +30,7 @@ class CartBookModelAdmin(admin.ModelAdmin):
 
 @admin.register(Cart)
 class CartModelAdmin(admin.ModelAdmin):
-    list_display = ['owner', 'total_books', 'total_price']
+    list_display = ['owner', 'total_books', 'total_price', 'status_buy']
     fields = ['owner', 'total_books', 'total_price']
 
 

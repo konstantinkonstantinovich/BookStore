@@ -1,14 +1,13 @@
 import datetime
 from django.db.models import Q
-from django.db.models import Sum
+from django.db.models import Sum, Count
 from django.contrib import messages
 from django.contrib.auth import login, logout
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import User
 from django.contrib.auth.views import LoginView
 from django.template.loader import render_to_string
-from django.http import HttpResponseRedirect, HttpResponse, JsonResponse, Http404
-
+from django.http import HttpResponseRedirect, HttpResponse, JsonResponse
 # Create your views here.
 from django.shortcuts import redirect, render, get_object_or_404
 from django.views.generic import CreateView, ListView, DetailView
@@ -123,6 +122,11 @@ class UserProfile(DetailView):
         user = self.request.user
         return user
 
+    def get_context_data(self, **kwargs):
+        object_list = Cart.objects.filter(owner=self.get_object(), status_buy=True)
+        context = super(UserProfile, self).get_context_data(object_list=object_list, **kwargs)
+        return context
+
 
 class CartListView(ListView, LoginRequiredMixin):
     model = CartBook
@@ -193,8 +197,17 @@ def buy_book_now(request):
 
 def buy_book_in_cart(request):
     owner = request.user
-    CartBook.objects.filter(customer=owner).all().delete()
-    messages.add_message(request, messages.SUCCESS, 'Buying success!')
+    cart_item = CartBook.objects.filter(customer=owner).all()
+    carts = Cart.objects.get(owner=owner)
+    carts.status_buy = True
+    carts.status = 2
+    sum = CartBook.objects.filter(customer=owner).aggregate(Sum('total_price'))
+    count = CartBook.objects.filter(customer=owner).aggregate(Sum('quantity'))
+    carts.total_books = count['quantity__sum']
+    carts.total_price = sum['total_price__sum']
+    carts.save()
+    cart_item.delete()
+    messages.add_message(request, messages.SUCCESS, 'Order is processed!')
     return redirect('store:book-list')
 
 
@@ -279,3 +292,4 @@ def minus_form(request, pk):
         carts.total_price = carts.book.price
     carts.save()
     return redirect('store:cart-list')
+

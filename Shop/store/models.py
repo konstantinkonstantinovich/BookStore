@@ -68,9 +68,18 @@ class CartBook(models.Model):
 
 
 class Cart(models.Model):
+    class OrderStatus(models.IntegerChoices):
+        WAITING = 1, _('Waiting')
+        IN_PROGRESS = 2, _('In progress')
+        DONE = 4, _('Done')
+
     owner = models.ForeignKey(User, on_delete=models.CASCADE)
     total_books = models.PositiveIntegerField(default=0)
     total_price = models.DecimalField(max_digits=9, decimal_places=2)
+    status_buy = models.BooleanField(blank=True, default=False)
+    status = models.PositiveSmallIntegerField(
+        choices=OrderStatus.choices, default=OrderStatus.IN_PROGRESS
+    )
 
 
 
