@@ -28,8 +28,10 @@ SECRET_KEY = os.environ.get("SECRET_KEY", 'mysecretkeyis...')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*"]
 
+DOMAIN = "localhost"
+SCHEMA = "http"
 
 # Application definition
 
@@ -156,3 +158,9 @@ CELERY_ACCEPT_CONTENT = ['application/json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
 CELERY_TIMEZONE = TIME_ZONE
+
+EMAIL_HOST = "mailhog"
+EMAIL_PORT = "25"
+EMAIL_HOST_USER = ""
+EMAIL_HOST_PASSWORD = ""
+EMAIL_USE_SSL = False

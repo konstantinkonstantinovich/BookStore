@@ -1,3 +1,5 @@
+import uuid
+
 from django.db import models
 from django.contrib.auth import get_user_model
 from django.utils.translation import gettext_lazy as _
@@ -59,8 +61,24 @@ class Order(models.Model):
 
 
 class OrderItem(models.Model):
-    order = models.ForeignKey(Order, on_delete=models.CASCADE)
-    total_price = models.DecimalField(max_digits=9, decimal_places=2)
     book = models.ForeignKey(Book, on_delete=models.CASCADE)
     quantity = models.PositiveIntegerField(default=1)
+    customer = models.ForeignKey(User, on_delete=models.CASCADE)
+    total_price = models.DecimalField(max_digits=9, decimal_places=2)
+    order = models.ForeignKey(Order, on_delete=models.CASCADE)
+
+
+class BookInstance(models.Model):
+
+    class InstanceStatus(models.IntegerChoices):
+        RESERVED = 1, _('Reserved'),
+
+    id = models.UUIDField( # noqa: A003
+        primary_key=True, default=uuid.uuid4
+    )
+    book = models.ForeignKey(Book, on_delete=models.CASCADE)
+    item_of_order = models.ForeignKey(OrderItem, on_delete=models.CASCADE)
+    book_status = models.PositiveSmallIntegerField(
+        choices=InstanceStatus.choices
+    )
 
