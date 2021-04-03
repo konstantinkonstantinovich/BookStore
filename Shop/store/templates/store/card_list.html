@@ -16,16 +16,12 @@ body {
 }
 
 .plus {
-    position: absolute;
-    top: -4px;
-    left: 2px;
+    position: relative;
     cursor: pointer
 }
 
 .minus {
-    position: absolute;
-    top: 8px;
-    left: 5px;
+    position: relative;
     cursor: pointer
 }
 
@@ -178,14 +174,14 @@ a:focus {
         </div>
     </div>
 {% if object_list %}
-    {% for object in cart_list %}
+    {% for object in object_list %}
 
         <div class="row d-flex justify-content-center border-top">
             <div class="col-5">
                 <div class="row d-flex">
-                    <div class="book"> <img src="{{ object.product.book.image.url  }}" class="book-img"> </div>
+                    <div class="book"> <img src="{{ object.book.image.url  }}" class="book-img"> </div>
                     <div class="my-auto d-flex pad-left">
-                        <div class="mob-text" style="font-weight: bold;font-style: italic;">{{ object.product.book.title }}</div>
+                        <div class="mob-text" style="font-weight: bold;font-style: italic;">{{ object.book.title }}</div>
                     </div>
                 </div>
             </div>
@@ -193,12 +189,18 @@ a:focus {
                 <div class="row text-right">
                     <div class="col-4">
                         <div class="row d-flex justify-content-end px-3">
-                            <p class="mb-0" id="cnt1">{{ object.total_books }}</p>
-                            <div class="d-flex flex-column plus-minus"> <a style="color: black" class="vsm-text plus">+</a> <a style="color: black" class="vsm-text minus">-</a> </div>
+                            <div class="plus-minus">
+                                 <a style="color: black; font-size: 20px; margin: 5px;" class="vsm-text minus" href="{% url 'store:cart-item-minus' object.pk %}">-</a>
+                            </div>
+                            <p class="mb-0" id="cnt1" style="font-size: 22px">{{ object.quantity }}</p>
+                            <div class="plus-minus">
+                                <a style="color: black; font-size: 20px; margin: 5px;" class="vsm-text plus" href="{% url 'store:cart-item-plus' object.pk %}">+</a>
+                            </div>
+
                         </div>
                     </div>
                     <div class="col-4">
-                        <h6 class="mob-text">${{ object.product.book.price }}</h6>
+                        <h6 class="mob-text">${{ object.total_price }}</h6>
                     </div>
 
                     <div class="col-4">

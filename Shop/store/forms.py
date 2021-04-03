@@ -14,27 +14,27 @@ class ContactForm(forms.Form):
                               Textarea(attrs={'class': 'form-control'}))
 
 
-class FilterForm(forms.Form):
-    sorting = forms.ChoiceField(
-        choices=(
-            ("reviews", "According to reviews"),
-            ("popularity", "By popularity"),
-        ),
-        initial="popularity",
-        label="Sorting",
-        widget=forms.RadioSelect
-    )
-    price_sorting = forms.IntegerField(
-        max_value=30,
-        min_value=0,
-        label="Sorting"
-    )
-    category = forms.ChoiceField(
-        choices=[
-            (category.pk, category.name)
-            for category in Category.objects.all()
-        ],
-        required=False
-
-    )
-
+# class FilterForm(forms.Form):
+#     sorting = forms.ChoiceField(
+#         choices=(
+#             ("reviews", "According to reviews"),
+#             ("popularity", "By popularity"),
+#         ),
+#         initial="popularity",
+#         label="Sorting",
+#         widget=forms.RadioSelect
+#     )
+#     price_sorting = forms.IntegerField(
+#         max_value=30,
+#         min_value=0,
+#         label="Sorting"
+#     )
+#     category = forms.ChoiceField(
+#         choices=[
+#             (category.pk, category.name)
+#             for category in Category.objects.all()
+#         ],
+#         required=False
+#
+#     )
+#

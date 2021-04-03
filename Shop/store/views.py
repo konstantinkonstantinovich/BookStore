@@ -18,7 +18,7 @@ from django.views.generic.list import MultipleObjectMixin
 
 from .models import Book, Cart, CartBook, Comment
 
-from .forms import ContactForm, FilterForm
+from .forms import ContactForm
 
 from .tasks import send_mail_task
 
@@ -125,13 +125,13 @@ class UserProfile(DetailView):
 
 
 class CartListView(ListView, LoginRequiredMixin):
-    model = Cart
+    model = CartBook
     template_name = 'store/card_list.html'
 
     def get_context_data(self, *, object_list=None, **kwargs):
         owner = self.request.user
         context = super().get_context_data(**kwargs)
-        cart_total_price = Cart.objects.filter(owner=owner).aggregate(Sum('total_price'))
+        cart_total_price = CartBook.objects.filter(customer=owner).aggregate(Sum('total_price'))
         if cart_total_price['total_price__sum'] is None:
             cart_total_price['total_price__sum'] = 0
         context['cart_total'] = cart_total_price['total_price__sum']
@@ -139,27 +139,31 @@ class CartListView(ListView, LoginRequiredMixin):
 
     def get_queryset(self):
         owner = self.request.user
-        object_list = Cart.objects.filter(owner=owner)
+        object_list = CartBook.objects.filter(customer=owner)
         return object_list
 
 
 def add_to_cart(request, pk):
     count = 1
     user = request.user
-    cart_item = CartBook(
-        customer=user,
-        book=Book.objects.get(pk=pk),
-        quantity=count
-    )
-    cart_item.save()
-    cart = Cart(
-        product=cart_item,
-        total_books=cart_item.quantity,
-        total_price=cart_item.book.price,
+    carts, created = Cart.objects.get_or_create(
+        total_books=1,
+        total_price=1,
         owner=user
     )
-
-    cart.save()
+    cart_item, created = CartBook.objects.get_or_create(
+        book = Book.objects.get(pk=pk),
+        customer=user,
+        defaults = {
+            'quantity':count,
+            'total_price':Book.objects.get(pk=pk).price,
+            'cart_id': carts.id,
+        }
+    )
+    if not created:
+        cart_item.quantity+=count
+        cart_item.total_price+=Book.objects.get(pk=pk).price
+    cart_item.save()
     return redirect('store:cart-list')
 
 
@@ -189,7 +193,6 @@ def buy_book_now(request):
 
 def buy_book_in_cart(request):
     owner = request.user
-    Cart.objects.filter(owner=owner).all().delete()
     CartBook.objects.filter(customer=owner).all().delete()
     messages.add_message(request, messages.SUCCESS, 'Buying success!')
     return redirect('store:book-list')
@@ -231,29 +234,48 @@ def contact_form(request):
     return JsonResponse(data)
 
 
-def filter_form(request):
-    books = None
-    form = FilterForm(request.GET)
-    if form.is_valid():
-        sorting = form.cleaned_data['sorting']
-        price_max = form.cleaned_data['price_sorting']
-        category_pk = form.cleaned_data['category']
-        if category_pk:
-            books = Book.objects.filter(category__id=category_pk).filter(price=price_max)
-        else:
-            books = Book.objects.filter(price=price_max)
-        books = list(books)
-        if sorting == "popularity":
-            books.sort(key=lambda book: book.rating, reverse=True)
-    else:
-        raise Http404
-    return render(request, 'store/filter.html', dict(
-        books=books,
-        form=form
-    ))
+# def filter_form(request):
+#     books = None
+#     form = FilterForm(request.GET)
+#     if form.is_valid():
+#         sorting = form.cleaned_data['sorting']
+#         price_max = form.cleaned_data['price_sorting']
+#         category_pk = form.cleaned_data['category']
+#         if category_pk:
+#             books = Book.objects.filter(category__id=category_pk).filter(price=price_max)
+#         else:
+#             books = Book.objects.filter(price=price_max)
+#         books = list(books)
+#         if sorting == "popularity":
+#             books.sort(key=lambda book: book.rating, reverse=True)
+#     else:
+#         raise Http404
+#     return render(request, 'store/filter.html', dict(
+#         books=books,
+#         form=form
+#     ))
 
 
 def delete_from(request, pk):
-    cart = Cart.objects.get(pk=pk)
-    cart.delete()
+    carts = CartBook.objects.get(pk=pk)
+    carts.delete()
+    return redirect('store:cart-list')
+
+
+def plus_form(request, pk):
+    carts = CartBook.objects.get(pk=pk)
+    carts.quantity += 1
+    carts.total_price += carts.book.price
+    carts.save()
+    return redirect('store:cart-list')
+
+
+def minus_form(request, pk):
+    carts = CartBook.objects.get(pk=pk)
+    carts.quantity -= 1
+    carts.total_price -= carts.book.price
+    if carts.quantity < 1:
+        carts.quantity = 1
+        carts.total_price = carts.book.price
+    carts.save()
     return redirect('store:cart-list')
