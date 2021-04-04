@@ -2,9 +2,9 @@ from django.shortcuts import render
 
 from rest_framework import viewsets, permissions
 
-from .models import Book, Author, Category, OrderItem, Order
+from .models import Book, Author, Category, OrderItem, Order, BookInstance
 
-from .serializers import BookSerializer, AuthorSerializer, CategorySerializer, OrderItemSerializer, OrderSerializer
+from .serializers import BookSerializer, AuthorSerializer, CategorySerializer, OrderItemSerializer, OrderSerializer, BookInstanceSerializer
 
 
 class OrderViewSet(viewsets.ModelViewSet):
@@ -41,3 +41,7 @@ class CategoryViewSet(viewsets.ModelViewSet):
     queryset = Category.objects.all()
     permission_classes = [permissions.IsAuthenticated]
 
+
+class BookInstanceViewSet(viewsets.ModelViewSet):
+    queryset = BookInstance.objects.all()
+    serializer_class = BookInstanceSerializer

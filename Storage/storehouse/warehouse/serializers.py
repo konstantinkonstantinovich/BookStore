@@ -1,6 +1,12 @@
 from rest_framework import serializers
 
-from .models import Book, Author, Category, Order, OrderItem
+from .models import Book, Author, Category, Order, OrderItem, BookInstance
+
+
+class BookInstanceSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = BookInstance
+        fields = "__all__"
 
 
 class AuthorSerializer(serializers.ModelSerializer):
@@ -15,20 +21,23 @@ class CategorySerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
-class BookSerializer(serializers.ModelSerializer):
+class BookSerializer(serializers.HyperlinkedModelSerializer):
+    books = BookInstanceSerializer(source="bookinstance_set", many=True)
+
     class Meta:
+        many = True
         model = Book
-        fields = ('title', 'author', 'category', 'price', 'rating', 'image', 'description', 'status', 'publication_year')
+        fields = ('id', 'title', 'author', 'category', 'price', 'rating', 'image', 'description', 'status', 'publication_year')
 
 
 class OrderSerializer(serializers.ModelSerializer):
     class Meta:
         model = Order
-        fields = ('phone', 'first_name', 'status', 'email')
+        fields = "__all__"
 
 
 class OrderItemSerializer(serializers.ModelSerializer):
     class Meta:
         model = OrderItem
-        fields = ('order', 'total_price', 'book', 'quantity')
+        fields = "__all__"
 

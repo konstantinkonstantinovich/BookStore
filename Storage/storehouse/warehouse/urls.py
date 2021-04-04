@@ -12,6 +12,7 @@ router.register(r'order_item', views.OrderItemViewSet)
 router.register(r'author', views.AuthorViewSet)
 router.register(r'book', views.BookViewSet)
 router.register(r'category', views.CategoryViewSet)
+router.register(r'bookinstance', views.BookInstanceViewSet)
 
 urlpatterns = [
     path('', include(router.urls)),

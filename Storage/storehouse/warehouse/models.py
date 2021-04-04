@@ -10,6 +10,10 @@ User = get_user_model()
 
 
 class Author(models.Model):
+
+    id = models.UUIDField( # noqa: A003
+        primary_key=True, default=uuid.uuid4
+    )
     name = models.CharField(max_length=250)
 
     def __str__(self):
@@ -17,6 +21,10 @@ class Author(models.Model):
 
 
 class Category(models.Model):
+
+    id = models.UUIDField( # noqa: A003
+        primary_key=True, default=uuid.uuid4
+    )
     name = models.CharField(max_length=255)
 
     def __str__(self):
@@ -28,6 +36,10 @@ class Book(models.Model):
     class LoanStatus(models.IntegerChoices):
         AVAILABLE = 1, _('available')
         NOT_AVAILABLE = 2, _('not available')
+
+    id = models.UUIDField( # noqa: A003
+        primary_key=True, default=uuid.uuid4
+    )
 
     description = models.TextField()
     title = models.CharField(max_length=255)
@@ -52,6 +64,9 @@ class Order(models.Model):
         IN_PROGRESS = 2, _('In progress')
         DONE = 3, _('Done')
 
+    id = models.UUIDField( # noqa: A003
+        primary_key=True, default=uuid.uuid4
+    )
     phone = models.CharField(max_length=255)
     first_name = models.CharField(max_length=255)
     email = models.EmailField(unique=True)
@@ -72,6 +87,8 @@ class BookInstance(models.Model):
 
     class InstanceStatus(models.IntegerChoices):
         RESERVED = 1, _('Reserved'),
+        IN_STOCK = 2, _('In stock'),
+        SOLD = 3, _('Sold')
 
     id = models.UUIDField( # noqa: A003
         primary_key=True, default=uuid.uuid4
@@ -79,6 +96,6 @@ class BookInstance(models.Model):
     book = models.ForeignKey(Book, on_delete=models.CASCADE)
     item_of_order = models.ForeignKey(OrderItem, on_delete=models.CASCADE)
     book_status = models.PositiveSmallIntegerField(
-        choices=InstanceStatus.choices
+        choices=InstanceStatus.choices, default=InstanceStatus.IN_STOCK
     )
 

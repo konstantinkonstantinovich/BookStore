@@ -92,7 +92,7 @@ WSGI_APPLICATION = 'storehouse.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'dbstorage',
+        'NAME': 'db_storage',
         'USER': 'postgres',
         'PASSWORD': 'apple',
         'HOST': '127.0.0.1',
