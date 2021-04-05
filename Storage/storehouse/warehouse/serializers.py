@@ -21,13 +21,12 @@ class CategorySerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
-class BookSerializer(serializers.HyperlinkedModelSerializer):
-    books = BookInstanceSerializer(source="bookinstance_set", many=True)
+class BookSerializer(serializers.ModelSerializer):
 
     class Meta:
         many = True
         model = Book
-        fields = ('id', 'title', 'author', 'category', 'price', 'rating', 'image', 'description', 'status', 'publication_year')
+        fields = ('id','title', 'author', 'category', 'price', 'rating', 'image', 'description', 'status', 'publication_year')
 
 
 class OrderSerializer(serializers.ModelSerializer):

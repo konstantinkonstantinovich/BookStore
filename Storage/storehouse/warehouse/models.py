@@ -11,9 +11,6 @@ User = get_user_model()
 
 class Author(models.Model):
 
-    id = models.UUIDField( # noqa: A003
-        primary_key=True, default=uuid.uuid4
-    )
     name = models.CharField(max_length=250)
 
     def __str__(self):
@@ -22,9 +19,6 @@ class Author(models.Model):
 
 class Category(models.Model):
 
-    id = models.UUIDField( # noqa: A003
-        primary_key=True, default=uuid.uuid4
-    )
     name = models.CharField(max_length=255)
 
     def __str__(self):
@@ -36,10 +30,6 @@ class Book(models.Model):
     class LoanStatus(models.IntegerChoices):
         AVAILABLE = 1, _('available')
         NOT_AVAILABLE = 2, _('not available')
-
-    id = models.UUIDField( # noqa: A003
-        primary_key=True, default=uuid.uuid4
-    )
 
     description = models.TextField()
     title = models.CharField(max_length=255)
@@ -64,9 +54,6 @@ class Order(models.Model):
         IN_PROGRESS = 2, _('In progress')
         DONE = 3, _('Done')
 
-    id = models.UUIDField( # noqa: A003
-        primary_key=True, default=uuid.uuid4
-    )
     phone = models.CharField(max_length=255)
     first_name = models.CharField(max_length=255)
     email = models.EmailField(unique=True)
@@ -78,7 +65,6 @@ class Order(models.Model):
 class OrderItem(models.Model):
     book = models.ForeignKey(Book, on_delete=models.CASCADE)
     quantity = models.PositiveIntegerField(default=1)
-    customer = models.ForeignKey(User, on_delete=models.CASCADE)
     total_price = models.DecimalField(max_digits=9, decimal_places=2)
     order = models.ForeignKey(Order, on_delete=models.CASCADE)
 
@@ -90,9 +76,6 @@ class BookInstance(models.Model):
         IN_STOCK = 2, _('In stock'),
         SOLD = 3, _('Sold')
 
-    id = models.UUIDField( # noqa: A003
-        primary_key=True, default=uuid.uuid4
-    )
     book = models.ForeignKey(Book, on_delete=models.CASCADE)
     item_of_order = models.ForeignKey(OrderItem, on_delete=models.CASCADE)
     book_status = models.PositiveSmallIntegerField(
