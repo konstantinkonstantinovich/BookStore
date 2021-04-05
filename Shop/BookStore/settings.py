@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'store.apps.StoreConfig',
+    'django_celery_results',
     'bootstrap4',
     'crispy_forms',
     'django_extensions',
@@ -89,7 +90,7 @@ DATABASES = {
         'NAME': 'db_store',
         'USER': 'postgres',
         'PASSWORD': 'apple',
-        'HOST': '127.0.0.1',
+        'HOST': 'localhost',
         'PORT': '5432',
     }
 }
