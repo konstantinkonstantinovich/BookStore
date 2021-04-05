@@ -26,10 +26,9 @@ SECRET_KEY = os.environ.get("SECRET_KEY", 'mysecretkeyis...')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
 
 
-# Application definition
+# Application definitions
 
 INSTALLED_APPS = [
     'django.contrib.admin',
