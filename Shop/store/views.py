@@ -153,7 +153,7 @@ def add_to_cart(request, pk):
     carts, created = Cart.objects.get_or_create(
         total_books=1,
         total_price=1,
-        owner=user
+        owner=user,
     )
     cart_item, created = CartBook.objects.get_or_create(
         book = Book.objects.get(pk=pk),
@@ -198,7 +198,7 @@ def buy_book_now(request):
 def buy_book_in_cart(request):
     owner = request.user
     cart_item = CartBook.objects.filter(customer=owner).all()
-    carts = Cart.objects.get(owner=owner)
+    carts = Cart.objects.filter(owner=owner)
     carts.status_buy = True
     carts.status = 2
     sum = CartBook.objects.filter(customer=owner).aggregate(Sum('total_price'))
@@ -245,28 +245,6 @@ def contact_form(request):
         request=request
     )
     return JsonResponse(data)
-
-
-# def filter_form(request):
-#     books = None
-#     form = FilterForm(request.GET)
-#     if form.is_valid():
-#         sorting = form.cleaned_data['sorting']
-#         price_max = form.cleaned_data['price_sorting']
-#         category_pk = form.cleaned_data['category']
-#         if category_pk:
-#             books = Book.objects.filter(category__id=category_pk).filter(price=price_max)
-#         else:
-#             books = Book.objects.filter(price=price_max)
-#         books = list(books)
-#         if sorting == "popularity":
-#             books.sort(key=lambda book: book.rating, reverse=True)
-#     else:
-#         raise Http404
-#     return render(request, 'store/filter.html', dict(
-#         books=books,
-#         form=form
-#     ))
 
 
 def delete_from(request, pk):
